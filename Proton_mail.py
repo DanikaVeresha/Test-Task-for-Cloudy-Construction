@@ -1,49 +1,67 @@
-# from pyvirtualdisplay import Display
 from selenium import webdriver
-from time import sleep
+import time
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from configfile import username, user_password
+
+#if:
+# DataConfig:
+# username = 'deshdesh288'
+# user_password = 'desh288diesh'
 
 
-# noinspection PyDeprecation
-def send_proton_email(email_to, email_subject, email_message):
-    driver = ''
-    display = ''
+def send_proton_email(email_to, email_subject):
+    service = Service(exsecutive_path='/usr/local/bin/chromedriver')
+    driver = webdriver.Chrome(service=service)
     try:
-        # display = Display(visible=0, size=(1920, 1080))   # Used to create a virtual display to be able to run selenium in a terminal without GUI
-        # display.start()
-        driver = webdriver.Firefox()
         driver.get('https://mail.protonmail.com/login')
-        driver.find_element_by_id('username').send_keys('Account_Username')
-        driver.find_element_by_id('password').send_keys('Account_password')
-        driver.find_element_by_id('login_btn').click()
-        sleep(3)
-        driver.find_element_by_id('password').send_keys('Mail_Decrypt_Password')
-        driver.find_element_by_id('unlock_btn').click()
-        sleep(5)
-        driver.find_element_by_xpath('//*[@id="pm_sidebar"]/section/a').click()
-        sleep(2)
-        driver.switch_to_active_element().send_keys(email_to + '\n' + '\t' + email_subject + '\t')
-        sleep(0.5)
-        driver.switch_to_active_element().send_keys(email_message + '\t' + '\t' + '\t' + '\t' + '\t' + '\t')
-        sleep(0.5)
-        driver.switch_to_active_element().click()
-        sleep(5)
-        driver.quit()
-        # display.stop()
-        print('E-mail Sent!')
-        del email_subject
-        del email_message
-        del driver
-        del display
-    except Exception as err:
-        driver.quit()
-        # display.stop()
-        print('\nError Occurred while sending e-mail!!')
-        status = (str(err), 'Error Origin: Proton Mail Script')
-        print(status)
-        del err
-        del status
-        del driver
-        # del display
+        time.sleep(5)
+        driver.find_element(by=By.ID, value='username').send_keys(username)
+        time.sleep(5)
+        driver.find_element(by=By.ID, value='password').send_keys(user_password)
+        time.sleep(3)
+        driver.find_element(by=By.XPATH,
+                            value='/html/body/div[1]/div[4]/div[1]/main/div[1]/div[2]/'
+                                  'form/button').send_keys(Keys.ENTER)
+        time.sleep(30)
+        print('You are logged in')
+        driver.find_element(by=By.XPATH,
+                            value='/html/body/div[1]/div[3]/div/div[2]/div/div[1]/div[2]/button').click()
+        time.sleep(8)
+        print('Send SMS')
+        driver.find_element(by=By.XPATH,
+                            value='/html/body/div[1]/div[4]/div/div/div/div/div/div[2]/div/div/div/div/'
+                                  'div/div/input').send_keys(email_to)
+        time.sleep(8)
+        print('You are enter email')
+        driver.find_element(by=By.XPATH,
+                            value='/html/body/div[1]/div[4]/div/div/div/div/div/div[3]/div/div/'
+                                  'input').send_keys(email_subject)
+        time.sleep(10)
+        print('You are enter subject')
+        driver.find_element(by=By.XPATH,
+                            value='html/body/div[1]/div[4]/div/div/div/div/section/div/div[1]/div[1]/div').click()
+        time.sleep(8)
+        print('You are enter text for next recipient')
+        driver.find_element(by=By.XPATH,
+                            value='/html/body/div[1]/div[4]/div/div/div/footer/div/div[1]/button[1]').click()
+        time.sleep(25)
+        print('Send SMS - Done')
 
-send_proton_email('receiver_email@gmail.com', 'test', 'testmsg')
-#TEST
+        driver.find_element(by=By.XPATH,
+                            value='/html/body/div[1]/div[3]/div/div/div/div[1]/div[4]/nav/div/ul/div[3]/li/a').click()
+        time.sleep(25)
+        print('Its all.Thank you so match!')
+
+    except Exception as error:
+        driver.quit()
+        print('You must enter correct information!!!')
+        status = (str(error), 'Error Origin: Proton Mail Script')
+        print(status)
+
+
+send_proton_email('deshdesh288@proton.me',
+                  'Hello! Its me. Candidate for a vacancy! '
+                  'I am so glad that you have an opening for this position.')
+
